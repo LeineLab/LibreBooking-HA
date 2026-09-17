@@ -1,0 +1,62 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mit LibreBooking verbinden",
+        "data": {
+          "url": "URL",
+          "username": "Benutzername",
+          "password": "Passwort"
+        }
+      },
+      "resources": {
+        "title": "Ressourcen auswählen",
+        "description": "Wähle aus, welche LibreBooking-Ressourcen Sensoren und einen Kalender in Home Assistant erhalten sollen.",
+        "data": {
+          "track_all_resources": "Alle Ressourcen verfolgen (auch später hinzugefügte)",
+          "resources": "Ressourcen"
+        }
+      },
+      "reauth_confirm": {
+        "title": "LibreBooking erneut authentifizieren",
+        "data": {
+          "password": "Passwort"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Benutzername oder Passwort ungültig",
+      "cannot_connect": "Verbindung zu LibreBooking nicht möglich",
+      "api_disabled": "Die LibreBooking Web Services API ist auf dem Server deaktiviert. Ein Administrator muss in config/config.php [\"api\"][\"enabled\"] = true setzen."
+    },
+    "abort": {
+      "already_configured": "Dieses LibreBooking-Konto ist bereits eingerichtet",
+      "reauth_successful": "Erneute Authentifizierung erfolgreich"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "LibreBooking-Optionen",
+        "data": {
+          "track_all_resources": "Alle Ressourcen verfolgen (auch später hinzugefügte)",
+          "resources": "Ressourcen (nur relevant, wenn 'Alle Ressourcen verfolgen' aus ist)",
+          "scan_interval": "Abfrageintervall (Sekunden)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zu LibreBooking nicht möglich, zeige zuletzt bekannte Ressourcen",
+      "api_disabled": "Die LibreBooking Web Services API ist auf dem Server deaktiviert, zeige zuletzt bekannte Ressourcen"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "occupied": { "name": "Belegt" }
+    },
+    "sensor": {
+      "booked_until": { "name": "Belegt bis" },
+      "next_reservation": { "name": "Nächste Buchung" }
+    }
+  }
+}

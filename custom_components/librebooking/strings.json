@@ -1,0 +1,62 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to LibreBooking",
+        "data": {
+          "url": "URL",
+          "username": "Username",
+          "password": "Password"
+        }
+      },
+      "resources": {
+        "title": "Select resources",
+        "description": "Choose which LibreBooking resources should get sensors and a calendar in Home Assistant.",
+        "data": {
+          "track_all_resources": "Track all resources (including ones added later)",
+          "resources": "Resources"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate LibreBooking",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid username or password",
+      "cannot_connect": "Could not connect to LibreBooking",
+      "api_disabled": "The LibreBooking Web Services API is disabled on the server. An administrator must set [\"api\"][\"enabled\"] = true in config/config.php."
+    },
+    "abort": {
+      "already_configured": "This LibreBooking account is already configured",
+      "reauth_successful": "Re-authentication was successful"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "LibreBooking options",
+        "data": {
+          "track_all_resources": "Track all resources (including ones added later)",
+          "resources": "Resources (only used when 'Track all resources' is off)",
+          "scan_interval": "Polling interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to LibreBooking, showing previously known resources",
+      "api_disabled": "The LibreBooking Web Services API is disabled on the server, showing previously known resources"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "occupied": { "name": "Occupied" }
+    },
+    "sensor": {
+      "booked_until": { "name": "Booked until" },
+      "next_reservation": { "name": "Next reservation" }
+    }
+  }
+}
