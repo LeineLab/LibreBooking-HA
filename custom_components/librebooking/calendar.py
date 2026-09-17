@@ -24,8 +24,10 @@ async def async_setup_entry(
     async_setup_resource_entities(hass, entry, async_add_entities, [LibreBookingCalendar])
 
 
-def _reservation_to_event(reservation: dict) -> CalendarEvent:
-    booked_by = reservation_booked_by(reservation)
+def _reservation_to_event(
+    coordinator: LibreBookingCoordinator, reservation: dict
+) -> CalendarEvent:
+    booked_by = reservation_booked_by(coordinator, reservation)
     summary = reservation.get("title") or reservation.get("resourceName") or "Reservation"
     if booked_by:
         summary = f"{summary} ({booked_by})"
@@ -55,7 +57,7 @@ class LibreBookingCalendar(LibreBookingResourceEntity, CalendarEntity):
     def event(self) -> CalendarEvent | None:
         state = self.resource_state
         reservation = state.current or state.next
-        return _reservation_to_event(reservation) if reservation else None
+        return _reservation_to_event(self.coordinator, reservation) if reservation else None
 
     async def async_get_events(
         self, hass: HomeAssistant, start_date: datetime, end_date: datetime
@@ -63,4 +65,4 @@ class LibreBookingCalendar(LibreBookingResourceEntity, CalendarEntity):
         reservations = await self.coordinator.client.async_get_reservations(
             start_date, end_date, resource_id=self._resource_id
         )
-        return [_reservation_to_event(r) for r in reservations]
+        return [_reservation_to_event(self.coordinator, r) for r in reservations]

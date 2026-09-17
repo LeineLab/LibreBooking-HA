@@ -13,7 +13,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 import homeassistant.util.dt as dt_util
 
 from .api import LibreBookingAuthError, LibreBookingClient, LibreBookingError
-from .const import LOGGER, LOOKAHEAD, LOOKBACK
+from .const import LOGGER, LOOKAHEAD, LOOKBACK, NAME_FORMAT_USERNAME
 
 
 @dataclass
@@ -37,6 +37,7 @@ class LibreBookingCoordinator(DataUpdateCoordinator[dict[int, ResourceState]]):
         client: LibreBookingClient,
         resource_ids: list[int] | None,
         scan_interval: int,
+        name_format: str,
     ) -> None:
         super().__init__(
             hass,
@@ -47,6 +48,8 @@ class LibreBookingCoordinator(DataUpdateCoordinator[dict[int, ResourceState]]):
         self.entry = entry
         self.client = client
         self.resource_ids = resource_ids  # None/empty means "all resources"
+        self.name_format = name_format
+        self.usernames: dict[int, str] = {}
 
     async def _async_update_data(self) -> dict[int, ResourceState]:
         try:
@@ -58,6 +61,21 @@ class LibreBookingCoordinator(DataUpdateCoordinator[dict[int, ResourceState]]):
 
         if self.resource_ids:
             resources = [r for r in resources if r["resourceId"] in self.resource_ids]
+
+        if self.name_format == NAME_FORMAT_USERNAME:
+            try:
+                users = await self.client.async_get_users()
+                self.usernames = {
+                    user["id"]: user["userName"]
+                    for user in users
+                    if user.get("userName")
+                }
+            except (LibreBookingAuthError, LibreBookingError) as err:
+                LOGGER.warning(
+                    "Could not load LibreBooking users for username lookup, "
+                    "falling back to full name: %s",
+                    err,
+                )
 
         now = dt_util.utcnow()
 

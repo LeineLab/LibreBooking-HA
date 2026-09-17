@@ -44,7 +44,7 @@ class LibreBookingOccupancyBinarySensor(LibreBookingResourceEntity, BinarySensor
         current = self.resource_state.current
         return {
             "resource_id": self._resource_id,
-            "booked_by": reservation_booked_by(current),
+            "booked_by": reservation_booked_by(self.coordinator, current),
             "title": current.get("title") if current else None,
             "reference_number": current.get("referenceNumber") if current else None,
             "until": current.get("endDate") if current else None,

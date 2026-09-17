@@ -156,3 +156,12 @@ class LibreBookingClient:
             params["resourceId"] = resource_id
         data = await self._request("GET", "/Reservations/", params=params)
         return data.get("reservations", [])
+
+    async def async_get_users(self) -> list[dict[str, Any]]:
+        """Return all users visible to the authenticated user.
+
+        Used to resolve a reservation's numeric ``userId`` to a ``userName``,
+        since reservation objects only carry firstName/lastName/userId.
+        """
+        data = await self._request("GET", "/Users/")
+        return data.get("users", [])

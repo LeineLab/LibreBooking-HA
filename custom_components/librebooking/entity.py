@@ -11,20 +11,40 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import (
+    DOMAIN,
+    NAME_FORMAT_FIRST,
+    NAME_FORMAT_LAST,
+    NAME_FORMAT_USERNAME,
+)
 from .coordinator import LibreBookingCoordinator, ResourceState
 
 
-def reservation_booked_by(reservation: dict[str, Any] | None) -> str | None:
-    """Return a display name for who holds a reservation."""
+def reservation_booked_by(
+    coordinator: LibreBookingCoordinator, reservation: dict[str, Any] | None
+) -> str | None:
+    """Return a display name for who holds a reservation.
+
+    Follows the integration's configured name_format, falling back to
+    first+last name when a username lookup isn't available (e.g. LibreBooking
+    Users API unreachable, or a guest reservation with no username).
+    """
     if reservation is None:
         return None
-    name = " ".join(
-        part
-        for part in (reservation.get("firstName"), reservation.get("lastName"))
-        if part
-    )
-    return name or None
+
+    first_name = reservation.get("firstName") or ""
+    last_name = reservation.get("lastName") or ""
+    full_name = " ".join(part for part in (first_name, last_name) if part) or None
+
+    name_format = coordinator.name_format
+    if name_format == NAME_FORMAT_FIRST:
+        return first_name or None
+    if name_format == NAME_FORMAT_LAST:
+        return last_name or None
+    if name_format == NAME_FORMAT_USERNAME:
+        username = coordinator.usernames.get(reservation.get("userId"))
+        return username or full_name
+    return full_name
 
 
 class LibreBookingResourceEntity(CoordinatorEntity[LibreBookingCoordinator]):

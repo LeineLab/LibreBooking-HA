@@ -8,7 +8,13 @@ from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import LibreBookingAuthError, LibreBookingClient, LibreBookingError
-from .const import CONF_RESOURCES, DEFAULT_SCAN_INTERVAL, DOMAIN
+from .const import (
+    CONF_NAME_FORMAT,
+    CONF_RESOURCES,
+    DEFAULT_NAME_FORMAT,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+)
 from .coordinator import LibreBookingCoordinator
 
 PLATFORMS = ["binary_sensor", "sensor", "calendar"]
@@ -33,8 +39,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     scan_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
     resource_ids = entry.options.get(CONF_RESOURCES, entry.data.get(CONF_RESOURCES))
+    name_format = entry.options.get(
+        CONF_NAME_FORMAT, entry.data.get(CONF_NAME_FORMAT, DEFAULT_NAME_FORMAT)
+    )
 
-    coordinator = LibreBookingCoordinator(hass, entry, client, resource_ids, scan_interval)
+    coordinator = LibreBookingCoordinator(
+        hass, entry, client, resource_ids, scan_interval, name_format
+    )
     await coordinator.async_config_entry_first_refresh()
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator

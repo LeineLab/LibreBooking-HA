@@ -14,7 +14,8 @@
         "description": "Choose which LibreBooking resources should get sensors and a calendar in Home Assistant.",
         "data": {
           "track_all_resources": "Track all resources (including ones added later)",
-          "resources": "Resources"
+          "resources": "Resources",
+          "name_format": "Show the booking person as"
         }
       },
       "reauth_confirm": {
@@ -41,6 +42,7 @@
         "data": {
           "track_all_resources": "Track all resources (including ones added later)",
           "resources": "Resources (only used when 'Track all resources' is off)",
+          "name_format": "Show the booking person as",
           "scan_interval": "Polling interval (seconds)"
         }
       }
@@ -57,6 +59,16 @@
     "sensor": {
       "booked_until": { "name": "Booked until" },
       "next_reservation": { "name": "Next reservation" }
+    }
+  },
+  "selector": {
+    "name_format": {
+      "options": {
+        "first_name": "First name",
+        "last_name": "Last name",
+        "full_name": "First + last name",
+        "username": "Username"
+      }
     }
   }
 }

@@ -75,11 +75,18 @@ Settings → Devices & Services → Add Integration → **LibreBooking**.
    entities automatically, including ones created in LibreBooking later, no
    reconfiguration needed — or turn it off and pick a fixed set of resources
    from the list.
+3. Choose how the booking person should be shown (**Show the booking person
+   as**): first name, last name, first + last name (default), or username.
+   Username is resolved via LibreBooking's Users API and falls back to
+   first + last name if that lookup fails or has no username for that user
+   (e.g. a guest reservation). This is useful if your LibreBooking instance
+   only fills in the first name via OIDC/SSO and leaves the last name as a
+   placeholder like "not set".
 
-Afterwards, use the integration's **Configure** button to change this at any
-time, or to change the polling interval (default: 60 seconds). If you picked
-a fixed set of resources, a resource added later in LibreBooking will *not*
-get entities until you revisit Configure and select it.
+Afterwards, use the integration's **Configure** button to change any of this
+at any time, or to change the polling interval (default: 60 seconds). If you
+picked a fixed set of resources, a resource added later in LibreBooking will
+*not* get entities until you revisit Configure and select it.
 
 ## Notes
 

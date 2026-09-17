@@ -56,7 +56,7 @@ class LibreBookingBookedUntilSensor(LibreBookingResourceEntity, SensorEntity):
         current = self.resource_state.current
         return {
             "resource_id": self._resource_id,
-            "booked_by": reservation_booked_by(current),
+            "booked_by": reservation_booked_by(self.coordinator, current),
             "title": current.get("title") if current else None,
         }
 
@@ -81,7 +81,7 @@ class LibreBookingNextReservationSensor(LibreBookingResourceEntity, SensorEntity
         next_reservation = self.resource_state.next
         return {
             "resource_id": self._resource_id,
-            "booked_by": reservation_booked_by(next_reservation),
+            "booked_by": reservation_booked_by(self.coordinator, next_reservation),
             "title": next_reservation.get("title") if next_reservation else None,
             "ends": next_reservation.get("endDate") if next_reservation else None,
             "reference_number": (

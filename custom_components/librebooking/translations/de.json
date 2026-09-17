@@ -14,7 +14,8 @@
         "description": "Wähle aus, welche LibreBooking-Ressourcen Sensoren und einen Kalender in Home Assistant erhalten sollen.",
         "data": {
           "track_all_resources": "Alle Ressourcen verfolgen (auch später hinzugefügte)",
-          "resources": "Ressourcen"
+          "resources": "Ressourcen",
+          "name_format": "Buchende Person anzeigen als"
         }
       },
       "reauth_confirm": {
@@ -41,6 +42,7 @@
         "data": {
           "track_all_resources": "Alle Ressourcen verfolgen (auch später hinzugefügte)",
           "resources": "Ressourcen (nur relevant, wenn 'Alle Ressourcen verfolgen' aus ist)",
+          "name_format": "Buchende Person anzeigen als",
           "scan_interval": "Abfrageintervall (Sekunden)"
         }
       }
@@ -57,6 +59,16 @@
     "sensor": {
       "booked_until": { "name": "Belegt bis" },
       "next_reservation": { "name": "Nächste Buchung" }
+    }
+  },
+  "selector": {
+    "name_format": {
+      "options": {
+        "first_name": "Vorname",
+        "last_name": "Nachname",
+        "full_name": "Vor- + Nachname",
+        "username": "Benutzername"
+      }
     }
   }
 }

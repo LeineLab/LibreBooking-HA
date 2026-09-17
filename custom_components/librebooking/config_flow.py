@@ -9,7 +9,7 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_SCAN_INTERVAL, CONF_URL, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, selector
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import (
@@ -19,11 +19,22 @@ from .api import (
     LibreBookingError,
 )
 from .const import (
+    CONF_NAME_FORMAT,
     CONF_RESOURCES,
     CONF_TRACK_ALL_RESOURCES,
+    DEFAULT_NAME_FORMAT,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     MIN_SCAN_INTERVAL,
+    NAME_FORMAT_OPTIONS,
+)
+
+NAME_FORMAT_SELECTOR = selector.SelectSelector(
+    selector.SelectSelectorConfig(
+        options=NAME_FORMAT_OPTIONS,
+        mode=selector.SelectSelectorMode.DROPDOWN,
+        translation_key=CONF_NAME_FORMAT,
+    )
 )
 
 STEP_USER_SCHEMA = vol.Schema(
@@ -111,6 +122,7 @@ class LibreBookingConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._data[CONF_RESOURCES] = (
                 None if track_all else [int(r) for r in user_input[CONF_RESOURCES]]
             )
+            self._data[CONF_NAME_FORMAT] = user_input[CONF_NAME_FORMAT]
             return self.async_create_entry(title=self._data[CONF_URL], data=self._data)
 
         schema = vol.Schema(
@@ -119,6 +131,9 @@ class LibreBookingConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Optional(
                     CONF_RESOURCES, default=list(self._available_resources)
                 ): cv.multi_select(self._available_resources),
+                vol.Required(
+                    CONF_NAME_FORMAT, default=DEFAULT_NAME_FORMAT
+                ): NAME_FORMAT_SELECTOR,
             }
         )
         return self.async_show_form(step_id="resources", data_schema=schema)
@@ -218,6 +233,7 @@ class LibreBookingOptionsFlow(config_entries.OptionsFlow):
                     CONF_RESOURCES: (
                         None if track_all else [int(r) for r in user_input[CONF_RESOURCES]]
                     ),
+                    CONF_NAME_FORMAT: user_input[CONF_NAME_FORMAT],
                     CONF_SCAN_INTERVAL: user_input[CONF_SCAN_INTERVAL],
                 },
             )
@@ -232,6 +248,10 @@ class LibreBookingOptionsFlow(config_entries.OptionsFlow):
         current_resources = (
             [str(r) for r in stored_resources] if stored_resources else list(resources)
         )
+        current_name_format = self._config_entry.options.get(
+            CONF_NAME_FORMAT,
+            self._config_entry.data.get(CONF_NAME_FORMAT, DEFAULT_NAME_FORMAT),
+        )
         current_scan_interval = self._config_entry.options.get(
             CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
         )
@@ -241,6 +261,9 @@ class LibreBookingOptionsFlow(config_entries.OptionsFlow):
                 vol.Optional(
                     CONF_RESOURCES, default=current_resources
                 ): cv.multi_select(resources),
+                vol.Required(
+                    CONF_NAME_FORMAT, default=current_name_format
+                ): NAME_FORMAT_SELECTOR,
                 vol.Required(
                     CONF_SCAN_INTERVAL, default=current_scan_interval
                 ): vol.All(int, vol.Range(min=MIN_SCAN_INTERVAL)),
