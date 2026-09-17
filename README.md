@@ -90,9 +90,16 @@ picked a fixed set of resources, a resource added later in LibreBooking will
 
 ## Notes
 
-- Polling only covers a rolling window (current time -1h to +14 days) to
-  determine "current" and "next" reservation state; the calendar entity fetches
-  whatever range Home Assistant's calendar view requests directly from the API.
+- Polling queries LibreBooking for reservations in a rolling window (current
+  time -1h to +14 days). This is **not** a filter on the reservation's start
+  time — LibreBooking's API returns every reservation that *overlaps* that
+  window at all (its own SQL matches on start-in-range OR end-in-range OR
+  fully spanning the range). A long reservation that started well before
+  "-1h" is still returned in full and shown as occupied for its entire
+  actual duration; the "-1h" only trims reservations that already ended
+  before that point, it never cuts a still-running one short. The calendar
+  entity separately fetches whatever range Home Assistant's calendar view
+  requests directly from the API.
 - If your password changes or the session is rejected, Home Assistant will
   prompt for reauthentication.
 - If the LibreBooking server is temporarily unreachable (offline, network

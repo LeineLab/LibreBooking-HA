@@ -26,6 +26,11 @@ DEFAULT_NAME_FORMAT = NAME_FORMAT_FULL
 DEFAULT_SCAN_INTERVAL = 60
 MIN_SCAN_INTERVAL = 15
 LOOKAHEAD = timedelta(days=14)
+# LibreBooking's Reservations API filters by overlap with [now-LOOKBACK, now+LOOKAHEAD],
+# not by start time alone (its SQL matches start-in-range OR end-in-range OR
+# fully-spanning). So a reservation that started long before LOOKBACK is still
+# returned in full as long as it hasn't ended yet; this only trims reservations
+# that already ended before now-LOOKBACK.
 LOOKBACK = timedelta(hours=1)
 
 API_PATH = "/Web/Services/index.php"
