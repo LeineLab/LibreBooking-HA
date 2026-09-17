@@ -95,3 +95,8 @@ picked a fixed set of resources, a resource added later in LibreBooking will
   whatever range Home Assistant's calendar view requests directly from the API.
 - If your password changes or the session is rejected, Home Assistant will
   prompt for reauthentication.
+- If the LibreBooking server is temporarily unreachable (offline, network
+  issue, timeout), entities briefly go unavailable and Home Assistant retries
+  automatically on the next poll — this does **not** trigger reauthentication.
+  Reauthentication is only requested when LibreBooking actively rejects the
+  session (HTTP 401/403), e.g. an expired session or a changed password.

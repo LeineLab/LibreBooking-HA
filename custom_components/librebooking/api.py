@@ -87,7 +87,7 @@ class LibreBookingClient:
                             f"Authenticate failed with status {resp.status}: {text}"
                         )
                     data = await resp.json(content_type=None)
-        except aiohttp.ClientError as err:
+        except (aiohttp.ClientError, TimeoutError) as err:
             raise LibreBookingError(f"Cannot connect to LibreBooking: {err}") from err
 
         if not data.get("isAuthenticated"):
@@ -133,7 +133,7 @@ class LibreBookingClient:
                             f"{method} {path} failed with status {resp.status}: {text}"
                         )
                     return await resp.json(content_type=None)
-        except aiohttp.ClientError as err:
+        except (aiohttp.ClientError, TimeoutError) as err:
             raise LibreBookingError(f"Cannot connect to LibreBooking: {err}") from err
 
     async def async_get_resources(self) -> list[dict[str, Any]]:
